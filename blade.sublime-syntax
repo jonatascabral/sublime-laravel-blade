@@ -1,20 +1,18 @@
 %YAML 1.2
 ---
 name: Laravel Blade
-file_extensions: [blade, blade.php]
-scope: source.php.blade
+file_extensions:
+  - blade
+  - blade.php
+scope: embedding.php.blade
 contexts:
   main:
     - match: ''
-      push:
-        - include: 'scope:text.html.basic'
-        - meta_scope: source.php.blade
-          pop: true
+      push: 'scope:text.html.basic'
       with_prototype:
 
         - match: '{{--'
-          captures:
-            0: punctuation.definition.comment.php.blade
+          scope: punctuation.definition.comment.php.blade
           push:
             - meta_scope: comment.block.html.blade
             - match: '--}}'
@@ -24,14 +22,13 @@ contexts:
               scope: invalid.illegal.bad-comments-or-CDATA.html.blade
 
         - match: '\{(!!)|(\{\{\{?)-?'
-          captures:
-            0: punctuation.section.embedded.begin.php.blade
+          scope: punctuation.section.embedded.begin.php.blade
           push:
-            - meta_content_scope: source.php.blade
+            - meta_content_scope: embedding.php.blade
             - match: '-?(\}?\}\})|(!!)\}'
-              captures:
-                0: punctuation.section.embedded.end.php.blade
+              scope: punctuation.section.embedded.end.php.blade
               pop: true
+            - include: 'scope:source.php'
 
         - match: '@\{\{\{?-?'
           captures:
@@ -61,7 +58,7 @@ contexts:
         - match: '<\?(?i:php|=)?'
           scope: punctuation.section.embedded.begin.php
           push:
-            - meta_content_scope: source.php.blade
+            - meta_content_scope: embedding.php.blade
             - meta_scope: meta.embedded.line.blade.php
             - include: 'scope:source.php'
           with_prototype:
@@ -75,7 +72,7 @@ contexts:
             0: keyword.control.php.blade
           push:
             - meta_scope: meta.embedded.block.php.blade
-            - meta_content_scope: source.php.blade
+            - meta_content_scope: embedding.php.blade
             - match: '(?<=\))'
               pop: true
             - include: 'scope:source.php'
@@ -91,7 +88,7 @@ contexts:
             0: variable.function
           push:
             - meta_scope: meta.embedded.block.php.blade
-            - meta_content_scope: source.php.blade
+            - meta_content_scope: embedding.php.blade
             - match: '(?<=\))'
               pop: true
             - include: 'scope:source.php'
